@@ -1,0 +1,527 @@
+a:hover {
+    text-decoration: none;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+}
+
+.pagination li {
+    margin: 0 0.25rem;
+    padding: 0.75rem 0;
+}
+
+.pagination .btn {
+    padding: 0.75rem 1.25rem;
+    border-radius: 1rem;
+    cursor: pointer;
+    height: auto;
+    min-width: auto;
+}
+
+.pagination .btn.active {
+    background: var(--main-color);
+    color: #ffffff;
+}
+
+.pagination li.disabled .btn {
+    background: rgba(228, 228, 228, 0.5);
+    cursor: default;
+}
+
+.accordion__box {
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    border: 2px solid rgba(228, 228, 228);
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.accordion__children {
+    margin-top: 20px;
+}
+
+.accordion__arrow.isShow {
+    transform: rotate(180deg);
+    transition: all 0.3s ease-in;
+}
+
+.accordion__container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.accordion__remove {
+    color: red;
+    margin-left: 20px;
+    cursor: pointer;
+}
+
+.form__addForm {
+    border: 2px solid var(--main-color);
+    background-color: white;
+    color: var(--main-color);
+    border-radius: 18px;
+    width: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    margin: 30px auto;
+}
+
+.form__addForm.lg {
+    width: 300px;
+}
+
+.sidebar__details {
+    margin-bottom: 0;
+}
+
+.btn__green {
+    background-color: var(--main-color);
+    color: white;
+}
+
+.btn_warning {
+    background-color: #eab308;
+}
+
+.btn_danger {
+    background-color: #dc2626;
+}
+
+.btn_update {
+    margin-right: 10px;
+}
+
+.btn:hover {
+    color: white;
+}
+
+.btn_small {
+    min-width: -webkit-fit-content;
+    min-width: -moz-fit-content;
+    min-width: fit-content;
+    height: 43px;
+}
+
+.create_container {
+    display: flex;
+    justify-content: flex-end;
+    margin: auto;
+    width: 90%;
+    margin-bottom: 20px;
+}
+
+.text-empty {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.field__calendar {
+    margin-bottom: 25px;
+}
+
+button:disabled:hover {
+    cursor: not-allowed;
+}
+
+.products__preview:before {
+    background: transparent;
+}
+
+.react-datepicker__day--keyboard-selected,
+.react-datepicker__month-text--keyboard-selected,
+.react-datepicker__quarter-text--keyboard-selected,
+.react-datepicker__year-text--keyboard-selected,
+.react-datepicker__day--selected,
+.react-datepicker__day--in-selecting-range,
+.react-datepicker__day--in-range,
+.react-datepicker__month-text--selected,
+.react-datepicker__month-text--in-selecting-range,
+.react-datepicker__month-text--in-range,
+.react-datepicker__quarter-text--selected,
+.react-datepicker__quarter-text--in-selecting-range,
+.react-datepicker__quarter-text--in-range,
+.react-datepicker__year-text--selected,
+.react-datepicker__year-text--in-selecting-range,
+.react-datepicker__year-text--in-rang .react-datepicker__day--selected:hover,
+.react-datepicker__day--in-selecting-range:hover,
+.react-datepicker__day--in-range:hover,
+.react-datepicker__month-text--selected:hover,
+.react-datepicker__month-text--in-selecting-range:hover,
+.react-datepicker__month-text--in-range:hover,
+.react-datepicker__quarter-text--selected:hover,
+.react-datepicker__quarter-text--in-selecting-range:hover,
+.react-datepicker__quarter-text--in-range:hover,
+.react-datepicker__year-text--selected:hover,
+.react-datepicker__year-text--in-selecting-range:hover,
+.react-datepicker__year-text--in-range:hover,
+.react-datepicker__time-container
+    .react-datepicker__time
+    .react-datepicker__time-box
+    ul.react-datepicker__time-list
+    li.react-datepicker__time-list-item--selected:hover,
+.react-datepicker__time-container
+    .react-datepicker__time
+    .react-datepicker__time-box
+    ul.react-datepicker__time-list
+    li.react-datepicker__time-list-item--selected,
+.react-datepicker__time-container
+    .react-datepicker__time
+    .react-datepicker__time-box
+    ul.react-datepicker__time-list
+    li.react-datepicker__time-list-item--selected,
+.react-datepicker__time-container
+    .react-datepicker__time
+    .react-datepicker__time-box
+    ul.react-datepicker__time-list
+    li.react-datepicker__time-list-item--selected:hover,
+.react-datepicker__close-icon::after,
+.react-datepicker__month-text.react-datepicker__month--selected:hover,
+.react-datepicker__month-text.react-datepicker__month--in-range:hover,
+.react-datepicker__month-text.react-datepicker__quarter--selected:hover,
+.react-datepicker__month-text.react-datepicker__quarter--in-range:hover,
+.react-datepicker__quarter-text.react-datepicker__month--selected:hover,
+.react-datepicker__quarter-text.react-datepicker__month--in-range:hover,
+.react-datepicker__quarter-text.react-datepicker__quarter--selected:hover,
+.react-datepicker__quarter-text.react-datepicker__quarter--in-range:hover,
+.react-datepicker__day--in-selecting-range:not(.react-datepicker__day--in-range, .react-datepicker__month-text--in-range, .react-datepicker__quarter-text--in-range, .react-datepicker__year-text--in-range),
+.react-datepicker__month-text--in-selecting-range:not(.react-datepicker__day--in-range, .react-datepicker__month-text--in-range, .react-datepicker__quarter-text--in-range, .react-datepicker__year-text--in-range),
+.react-datepicker__quarter-text--in-selecting-range:not(.react-datepicker__day--in-range, .react-datepicker__month-text--in-range, .react-datepicker__quarter-text--in-range, .react-datepicker__year-text--in-range),
+.react-datepicker__year-text--in-selecting-range:not(.react-datepicker__day--in-range, .react-datepicker__month-text--in-range, .react-datepicker__quarter-text--in-range, .react-datepicker__year-text--in-range),
+.react-datepicker__day--keyboard-selected:hover,
+.react-datepicker__month-text--keyboard-selected:hover,
+.react-datepicker__quarter-text--keyboard-selected:hover,
+.react-datepicker__year-text--keyboard-selected:hover {
+    background-color: var(--main-color) !important;
+}
+
+.ql-editor {
+    height: 300px !important;
+}
+
+.react__select {
+    margin-bottom: 10px;
+}
+
+.css-1pahdxg-control {
+    border-color: var(--main-color) !important;
+    box-shadow: 0 0 0 1px var(--main-color) !important;
+}
+
+.css-1pahdxg-control:hover {
+    border-color: var(--main-color) !important;
+}
+
+.avatar-upload {
+    position: relative;
+    max-width: 205px;
+    margin: 10px auto;
+    cursor: pointer;
+}
+
+.avatar-edit {
+    position: absolute;
+    right: 12px;
+    z-index: 1;
+    top: 10px;
+}
+
+.avatar-edit input {
+    display: none;
+}
+
+.avatar-edit input + label {
+    display: inline-block;
+    width: 34px;
+    height: 34px;
+    margin-bottom: 0;
+    background: #ffffff;
+    border: 1px solid transparent;
+    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+    font-weight: normal;
+    transition: all 0.2s ease-in-out;
+}
+
+.avatar-edit input + label {
+    cursor: pointer;
+}
+
+.avatar-preview {
+    width: 192px;
+    height: 192px;
+    position: relative;
+    border: 6px solid #f8f8f8;
+    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-preview > div {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.tags {
+    background: var(--main-color);
+    padding: 5px 10px;
+    border-radius: 20px;
+    color: white;
+    margin-right: 7px;
+}
+
+.ReactTags__selected {
+    margin-top: 10px;
+}
+
+.tags__remove {
+    color: white;
+    margin-left: 5px;
+}
+
+.text__empty {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.loader__center {
+    transform: translateX(-50%);
+    left: 47%;
+    position: absolute;
+    margin-top: 20px;
+}
+
+.form__title {
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.form__container {
+    width: 720px;
+    margin: auto;
+    margin-top: 50px;
+}
+
+.login__container {
+    margin-top: 75px;
+}
+
+.login__company__logo {
+    margin: 0 auto 50px auto;
+    width: 25%;
+}
+
+.login__container .form__container {
+    margin: auto;
+    width: 500px;
+}
+
+.login__container .form__title {
+    text-align: center;
+}
+
+.login__container button {
+    width: 100%;
+}
+
+.btn__delete__image {
+    min-width: 73px;
+    height: 30px;
+    margin-top: 10px;
+    font-size: 12px;
+    color: white;
+    border-radius: 0;
+}
+
+.color__box__container {
+    display: flex;
+}
+
+.color__box_content {
+    width: 24px;
+    height: 24px;
+    border-radius: 5px;
+}
+
+.color__box_text {
+    margin-left: 5px;
+}
+
+.field__input[type='color'] {
+    padding: 0;
+}
+
+.bg-green {
+    background-color: var(--main-color);
+}
+
+.btn.disabled,
+.btn:disabled,
+.btn.disabled:hover,
+.btn:disabled:hover {
+    background-color: var(--disabled-color);
+}
+
+.field__input::placeholder {
+    font-weight: 400;
+}
+
+.sidebar__link {
+    margin-left: 10px;
+    height: 44px;
+}
+
+.sidebar__link.active,
+a.sidebar__link:hover {
+    color: var(--main-color);
+    text-decoration: none;
+}
+
+.sidebar__icon .icon {
+    opacity: 1;
+}
+
+.sidebar__link.active .sidebar__icon .icon,
+a.sidebar__link:hover .sidebar__icon .icon {
+    fill: var(--main-color);
+}
+
+.pagination li .btn {
+    padding: 0.45rem 1rem;
+}
+
+.sidebar__profile {
+    margin-top: 0;
+}
+
+.sidebar__group:not(:last-child) {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.sidebar__ava {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+    height: auto;
+}
+
+.sidebar__ava svg {
+    font-size: 18px;
+}
+
+.sidebar__icon svg {
+    font-size: 20px;
+}
+
+.sidebar__user,
+.sidebar__item {
+    height: 50px;
+    justify-content: space-between;
+    margin-bottom: 2px;
+}
+
+.sorting__action:disabled {
+    cursor: not-allowed;
+}
+
+.sorting__action:disabled svg {
+    fill: var(--disabled-color);
+}
+
+.textbox__title {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.textbox__content__container {
+    border-bottom: 2px solid #01803c;
+    padding: 10px 0;
+    background-color: rgb(250 250 250);
+}
+
+.textbox__content {
+    font-size: 14px;
+}
+
+.textbox__container {
+    padding: 20px;
+}
+
+.dropdown__body {
+    padding: 22px;
+}
+
+.dropdown__item:not(:last-child) {
+    margin-bottom: 16px;
+}
+
+.dropdown__item .title {
+    font-size: 14px;
+}
+
+.page__stat_pt32 {
+    padding-top: 0;
+}
+
+.page__stat {
+    padding: 20px;
+}
+
+.page__title__container {
+    padding: 48px;
+    padding-bottom: 0;
+}
+
+.page__title {
+    font-weight: bold;
+    font-size: 34px;
+    margin-bottom: 22px;
+}
+
+.search__clear__icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+    transform: translateY(-50%);
+}
+
+.sorting__right {
+    justify-content: end;
+}
+
+.loading__progress {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+
+/* Login form: reference from antd */
+.login-form-forgot {
+    float: right;
+}
+.ant-col-rtl .login-form-forgot {
+    float: left;
+}
+
+.login-form-button {
+    width: 100%;
+}
+
+.ant-menu-submenu-popup {
+    display: none;
+}

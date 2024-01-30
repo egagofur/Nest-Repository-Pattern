@@ -1,0 +1,166 @@
+---
+- name: create preview
+  hosts: all
+  remote_user: ajeng
+  become: yes
+  become_user: project
+  gather_facts: no
+  vars:
+    project_name: "{{ lookup('env', 'CI_PROJECT_NAME') | default('project-name', true) }}"
+    version: "{{ lookup('env', 'CI_COMMIT_SHORT_SHA') | default('latest', true) }}"
+    preview_name: "{{ (project_name + '_' + version) | replace('-', '') }}"
+    base_hostname: "{{ project_name }}-{{ version }}"
+    mysql_config_path: "/var/www/project/db/.my.cnf"
+    working_directory: "/var/www/project/{{ preview_name }}"
+    src_db_host: "{{ lookup('env', 'SRC_DB_HOST') | default('127.0.0.1', true) }}"
+    src_db_port: "{{ lookup('env', 'SRC_DB_PORT') | default('3306', true) }}"
+    src_db_name: "{{ lookup('env', 'SRC_DB_NAME') | default('database', true) }}"
+    src_db_user: "{{ lookup('env', 'SRC_DB_USER') | default('root', true) }}"
+    src_db_password: "{{ lookup('env', 'SRC_DB_PASSWORD') | default('password', true) }}"
+    dest_db_port: "{{ lookup('env', 'DEST_DB_PORT') | default('3306', true) }}"
+    dest_db_user: "{{ lookup('env', 'DEST_DB_USER') | default('root', true) }}"
+    dest_db_password: "{{ lookup('env', 'DEST_DB_PASSWORD') | default('password', true) }}"
+    database_path: "/tmp/{{ src_db_name }}_{{ preview_name }}.sql"
+    custom_env:
+    - { key: SENTRY_DSN, value: "" }
+    - { key: DB_HOSTNAME, value: mysql57 }
+    - { key: DB_PORT, value: "3306" }
+    - { key: DB_USERNAME, value: "{{ dest_db_user }}" }
+    - { key: DB_PASSWORD, value: "{{ dest_db_password }}" }
+    - { key: DB_DATABASE, value: "{{ preview_name }}" }
+    - { key: REDIS_HOST, value: redis7 }
+    - { key: HOST_BACKOFFICE, value: "https://{{ preview_name }}.prv.dot.co.id:8081" }
+    container_labels:
+    - { 'key': 'traefik.enable', 'value': 'true' }
+    - { 'key': 'traefik.http.routers.{{ preview_name }}.rule', 'value': 'Host(`{{ preview_name }}.prv.dot.co.id`)' }
+    - { 'key': 'traefik.http.routers.{{ preview_name }}.entrypoints', 'value': 'sslpreview' }
+    - { 'key': 'traefik.http.services.{{ preview_name }}.loadbalancer.server.port', 'value': '3001' }
+    container_image: "registry.gitlab.dot.co.id/playground/boilerplates/nestjs-inertia:preview_{{ version }}"
+    gitlab_user: "{{ lookup('env', 'GITLAB_USER_LOGIN') | default('ajengkumalasari', true) }}"
+    mr_iid: "{{ lookup('env', 'CI_MERGE_REQUEST_IID') | default('1', true) }}"
+    mr_pid: "{{ lookup('env', 'CI_MERGE_REQUEST_PROJECT_ID') | default('1', true) }}"
+    gitlab_token: "{{ lookup('env', 'GITLAB_PREVIEW_NOTIFICATION_TOKEN') | default('abc123', true) }}"
+
+  tasks:
+  - name: dump database
+    community.mysql.mysql_db:
+      name: "{{ src_db_name }}"
+      state: dump
+      target: "{{ database_path }}"
+      login_host: "{{ src_db_host }}"
+      login_port: "{{ src_db_port }}"
+      login_user: "{{ src_db_user }}"
+      login_password: "{{ src_db_password }}"
+    when: "{{ inventory_hostname == 'dot_sandbox' }}"
+
+  - name: download database dump
+    ansible.builtin.fetch:
+      src: "{{ database_path }}"
+      dest: "tmp/"
+      flat: yes
+    run_once: yes
+    when: "{{ inventory_hostname == 'dot_sandbox' }}"
+
+  - name: upload database dump
+    ansible.builtin.copy:
+      src: "tmp/{{ src_db_name }}_{{ preview_name }}.sql"
+      dest: "/tmp/"
+    when: "{{ inventory_hostname == 'dot_preview' }}"
+
+  - name: drop db "{{ preview_name }}" if exist
+    community.mysql.mysql_db:
+      name: "{{ preview_name }}"
+      state: absent
+      config_file: "{{ mysql_config_path }}"
+      login_port: "{{ dest_db_port }}"
+    when: "{{ inventory_hostname == 'dot_preview' }}"
+
+  - name: create db with name "{{ preview_name }}"
+    community.mysql.mysql_db:
+      name: "{{ preview_name }}"
+      state: present
+      config_file: "{{ mysql_config_path }}"
+      login_port: "{{ dest_db_port }}"
+    when: "{{ inventory_hostname == 'dot_preview' }}"
+
+  - name: import db dev from file
+    community.mysql.mysql_db:
+      name: "{{ preview_name }}"
+      state: import
+      target: "{{ database_path }}"
+      config_file: "{{ mysql_config_path }}"
+      login_port: "{{ dest_db_port }}"
+    when: "{{ inventory_hostname == 'dot_preview' }}"
+  
+  - name: delete dumped db
+    ansible.builtin.file:
+      path: "{{ database_path }}"
+      state: absent
+
+  - name: create working directory
+    ansible.builtin.file:
+      path: "{{ working_directory }}"
+      state: directory
+    when: "{{ inventory_hostname == 'dot_preview' }}"
+
+  - name: create .env file
+    ansible.builtin.copy:
+      src: ../.env.example
+      dest: "{{ working_directory }}/.env"
+    when: "{{ inventory_hostname == 'dot_preview' }}"
+
+  - name: update .env file values
+    ansible.builtin.lineinfile:
+      path: "{{ working_directory }}/.env"
+      regexp: "^{{ item.key }}="
+      line: "{{ item.key }}={{ item.value }}"
+    with_items: "{{ custom_env }}"
+    no_log: true
+    when: "{{ inventory_hostname == 'dot_preview' }}"
+
+  - name: create container labels
+    ansible.builtin.set_fact:
+      container_labels: "{{ container_labels | default({}) | combine ({ item.key : item.value }) }}"
+    with_items: "{{ container_labels }}"
+    when: "{{ inventory_hostname == 'dot_preview' }}"
+
+  - name: run container
+    community.docker.docker_container:
+      name: "{{ preview_name }}"
+      image: "{{ container_image }}"
+      state: started
+      env_file: "{{ working_directory }}/.env"
+      networks:
+      - name: preview-network
+      labels: "{{ container_labels }}"
+      restart_policy: on-failure
+      recreate: yes
+    when: "{{ inventory_hostname == 'dot_preview' }}"
+
+  - name: wait preview ready
+    ansible.builtin.uri:
+      url: "https://{{ preview_name }}.prv.dot.co.id:8081/auth/login"
+      validate_certs: no
+    register: result
+    until: "result.status == 200"
+    retries: 45
+    delay: 5
+
+  - name: output
+    ansible.builtin.debug:
+      msg: "The deployment URL is https://{{ preview_name }}.prv.dot.co.id:8081"
+    when: "{{ inventory_hostname == 'dot_preview' }}"
+
+  - name: send notification
+    ansible.builtin.uri:
+      url: "https://gitlab.dot.co.id/api/v4/projects/{{ mr_pid }}/merge_requests/{{ mr_iid }}/notes"
+      method: POST
+      body_format: json
+      body: |
+        {
+          "body": "### Hello @{{ gitlab_user }}, preview sudah siap :tada: :tada: :tada:.\n#### Silahkan akses melalui tautan: https://{{ preview_name }}.prv.dot.co.id:8081 :100:\n\n_Jangan lupa jalankan clean pipeline setelah selesai yaaa._"
+        }
+      headers:
+        PRIVATE-TOKEN: "{{ gitlab_token }}"
+      status_code: 201
+    when: "{{ inventory_hostname == 'dot_preview' }}"

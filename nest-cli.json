@@ -1,0 +1,82 @@
+{
+    "collection": "@nestjs/schematics",
+    "monorepo": true,
+    "projects": {
+        "backoffice": {
+            "type": "application",
+            "root": "apps/backoffice",
+            "entryFile": "main",
+            "sourceRoot": "apps/backoffice/src",
+            "compilerOptions": {
+                "assets": [
+                    {
+                        "include": "../public",
+                        "outDir": "./dist/apps/backoffice/public",
+                        "watchAssets": true
+                    },
+                    {
+                        "include": "../assets",
+                        "outDir": "./dist/apps/backoffice/assets",
+                        "watchAssets": true
+                    },
+                    {
+                        "include": "./infrastructure/mail/templates/**/*",
+                        "outDir": "./dist/apps/backoffice/src",
+                        "watchAssets": true
+                    }
+                ],
+                "watchAssets": true,
+                "tsConfigPath": "apps/backoffice/tsconfig.app.json"
+            }
+        },
+        "api": {
+            "type": "application",
+            "root": "apps/api",
+            "entryFile": "main",
+            "sourceRoot": "apps/api/src",
+            "compilerOptions": {
+                "assets": [
+                    {
+                        "include": "../public",
+                        "outDir": "./dist/apps/api/public",
+                        "watchAssets": true
+                    },
+                    {
+                        "include": "../assets",
+                        "outDir": "./dist/apps/api/assets",
+                        "watchAssets": true
+                    },
+                    {
+                        "include": "./infrastructure/mail/templates/**/*",
+                        "outDir": "./dist/apps/api/src",
+                        "watchAssets": true
+                    }
+                ],
+                "watchAssets": true,
+                "tsConfigPath": "apps/api/tsconfig.app.json"
+            }
+        },
+        "graphql": {
+            "type": "application",
+            "root": "apps/graphql",
+            "entryFile": "main",
+            "sourceRoot": "apps/graphql/src",
+            "compilerOptions": {
+                "assets": [
+                    {
+                        "include": "../public",
+                        "outDir": "./dist/apps/graphql/public",
+                        "watchAssets": true
+                    },
+                    {
+                        "include": "../assets",
+                        "outDir": "./dist/apps/graphql/assets",
+                        "watchAssets": true
+                    }
+                ],
+                "watchAssets": true,
+                "tsConfigPath": "apps/graphql/tsconfig.app.json"
+            }
+        }
+    }
+}

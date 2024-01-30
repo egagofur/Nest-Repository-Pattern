@@ -1,0 +1,28 @@
+ARG NESTJS_INERTIA_BASE=node:16.15.1-alpine
+FROM ${NESTJS_INERTIA_BASE}
+
+ARG ONE_SIGNAL_APP_ID="" \
+    GOOGLE_MAPS_API=""
+
+ENV ONE_SIGNAL_APP_ID=${ONE_SIGNAL_APP_ID} \
+    GOOGLE_MAPS_API=${GOOGLE_MAPS_API}
+
+WORKDIR /app
+
+COPY --chown=node:node . /app/
+
+RUN apk add bash curl --no-cache \
+    && yarn install --frozen-lockfile --prefer-offline \
+    && yarn run webpack:backoffice:prod \
+    && yarn run build \
+    && cp -r apps/backoffice/public dist/apps/backoffice \
+    && rm -rf apps/backoffice/public \
+    && cp -r apps/backoffice/assets dist/apps/backoffice \
+    && rm -rf apps/backoffice/assets \
+    && cp -r apps/backoffice/src/infrastructure/mail dist/apps/backoffice/src/infrastructure \
+    && rm -rf apps/backoffice/src/infrastructure/mail \
+    && mkdir dist/temp
+
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
+CMD ["yarn", "run", "start:prod:backoffice"]
+EXPOSE 3001

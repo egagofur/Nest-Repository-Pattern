@@ -1,0 +1,58 @@
+---
+- name: create preview
+  hosts: develop
+  remote_user: ajeng
+  become: yes
+  become_user: project
+  gather_facts: no
+  vars:
+    version: "{{ lookup('env', 'CI_COMMIT_SHORT_SHA') | default('latest', true) }}"
+    container_image: "registry.gitlab.dot.co.id/playground/boilerplates/nestjs-inertia:development_{{ version }}"
+    working_directory: "/var/www/project/boilerplates/nestjs-inertia-dev"
+    stack_name: "boilerplate-nestjs-inertia-dev"
+    env_file_name: ".env.nestjs-inertia"
+
+  tasks:
+  - name: update stack
+    community.docker.docker_stack:
+      name: "{{ stack_name }}"
+      state: present
+      compose:
+      - "{{ working_directory }}/docker-compose.yaml"
+      - version: "3.5"
+        services:
+          nestjs-inertia:
+            image: "{{ container_image }}"
+      with_registry_auth: yes
+
+  - name: running task on container
+    community.docker.docker_container:
+      name: "{{ stack_name }}-deployment"
+      image: "{{ container_image }}"
+      detach: false
+      output_logs: true
+      env_file: "{{ working_directory }}/{{ env_file_name }}"
+      command: "{{ item }}"
+    register: container_task_output
+    with_items:
+    - yarn migrate
+
+  - name: print container output
+    ansible.builtin.debug:
+      msg: "{{ container_task_output.results|map(attribute='container.Output')|list }}"
+
+  - name: delete old image
+    community.docker.docker_prune:
+      containers: true
+      images: true
+      images_filters:
+        dangling: false
+
+  - name: wait deployment ready
+    ansible.builtin.uri:
+      url: https://boilerplate-nestjs-inertia-dev.dot.co.id/auth/login
+      validate_certs: no
+    register: result
+    until: "result.status == 200"
+    retries: 60
+    delay: 5

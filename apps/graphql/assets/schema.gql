@@ -1,0 +1,90 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Permission {
+  id: Int!
+  name: String
+  key: String
+}
+
+type Role {
+  id: Int!
+  name: String
+  key: String
+  permissions: [Permission!]!
+}
+
+type User {
+  email: String!
+  password: String!
+  identityNumber: String
+  phoneNumber: String
+  id: Int!
+  fullname: String
+  role: Role!
+  upadatedAt: DateTime
+  createdAt: DateTime!
+  deletedAt: DateTime
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type PaginateMeta {
+  page: Int!
+  perPage: Int!
+  total: Int!
+  totalPage: Int!
+}
+
+type PaginateUser {
+  meta: PaginateMeta
+  data: [User!]!
+}
+
+type AuthUserResponse {
+  id: Int!
+  fullname: String!
+  email: String!
+  phoneNumber: String!
+}
+
+type AuthLoginResponse {
+  user: AuthUserResponse!
+  token: String!
+}
+
+type Query {
+  user(id: Int!): User!
+  users(limit: Int!): [User!]!
+  userPaginate(paginate: UserIndexRequest!): PaginateUser!
+  role(id: Int!): Role!
+  roles: [Role!]!
+  permission(id: Int!): Permission!
+  permissions: [Permission!]!
+  loginBasic(authLoginRequest: AuthLoginRequest!): AuthLoginResponse!
+}
+
+input UserIndexRequest {
+  sort: String
+  order: String
+  perPage: Float = 15
+  page: Float = 1
+  search: String!
+}
+
+input AuthLoginRequest {
+  phoneNumber: String!
+  password: String!
+}
+
+type Mutation {
+  updateUser(id: Int!, updateUserFullname: UpdateUserFullname!): User!
+}
+
+input UpdateUserFullname {
+  fullname: String!
+}

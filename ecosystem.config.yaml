@@ -1,0 +1,16 @@
+apps:
+- name: 'buangdisini-api-dev'
+  interpreter: '/var/www/project/.nvm/versions/node/v16.14.0/bin/node'
+  script: '/var/www/project/.nvm/versions/node/v16.14.0/bin/npm'
+  args: 'run start:prod:api'
+  cwd: '/var/www/project/buangdisini-fullstack'
+  max_restarts: 3
+  min_uptime: '60s'
+
+- name: 'buangdisini-backoffice-dev'
+  interpreter: '/var/www/project/.nvm/versions/node/v16.14.0/bin/node'
+  script: '/var/www/project/.nvm/versions/node/v16.14.0/bin/npm'
+  args: 'run start:prod:backoffice'
+  cwd: '/var/www/project/buangdisini-fullstack'
+  max_restarts: 3
+  min_uptime: '60s'

@@ -1,0 +1,94 @@
+name: DB Migrate
+
+on:
+  push:
+    branches:
+      - development
+    # tags:
+    #   - "*"
+    paths:
+      - "databases/**"
+
+jobs:
+  db_migrate:
+    name: DB Migrate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set environment variables
+        run: |
+          echo "IMAGE_NAME=asia-southeast2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/buangdisini/migration" >> $GITHUB_ENV
+          TAG=$([ $(echo $GITHUB_REF | cut -d'/' -f2) = "tags" ] && echo "production" || echo "${GITHUB_REF##*/}")
+          echo "IMAGE_TAG=$TAG-${{ github.run_number }}" >> $GITHUB_ENV
+
+      - name: Login
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      # Install gcloud, `setup-gcloud` automatically picks up authentication from `auth`.
+      - name: "Set up Cloud SDK"
+        uses: "google-github-actions/setup-gcloud@v0"
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker asia-southeast2-docker.pkg.dev --quiet
+
+      - name: Build Docker image
+        run: docker build -t $IMAGE_NAME:$IMAGE_TAG -f Dockerfile.migration .
+
+      - name: Push Docker image
+        run: docker push $IMAGE_NAME:$IMAGE_TAG
+
+      - name: DB Migration on Development
+        if: github.ref == 'refs/heads/development'
+        uses: appleboy/ssh-action@master
+        env:
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
+        with:
+          host: ${{ secrets.SSH_HOST_DEV }}
+          username: ${{ secrets.SSH_USERNAME_DEV }}
+          key: ${{ secrets.SSH_KEY_DEV }}
+          script_stop: true
+          command_timeout: "15m"
+          envs: IMAGE_NAME,IMAGE_TAG
+          script: |
+            echo "IMAGE: $IMAGE_NAME:$IMAGE_TAG"
+            export IMAGE_NAME=$IMAGE_NAME
+            export IMAGE_TAG=$IMAGE_TAG
+            mkdir -p app/dev && cd app/dev
+            if [ -d config-management ]; then cd config-management && git restore . && git pull origin dev; else git clone --branch=dev git@github.com:Buang-Disini/config-management.git && cd config-management; fi
+            # running db migrate
+            docker run --rm --env-file=.env --network buangdisini_app_network $IMAGE_NAME:$IMAGE_TAG /bin/bash -c "yarn migrate && yarn seed:run -- -s CreatePermissionSeeder && yarn seed:run -- -s CreateRoleAdminPermissionSeeder && yarn seed:run -- -s CreateRoleChangerPermissionSeeder"
+            docker image rm $IMAGE_NAME:$IMAGE_TAG
+
+      # - name: DB Migration on Production
+      #   if: startsWith(github.ref, 'refs/tags/v')
+      #   uses: appleboy/ssh-action@master
+      #   env:
+      #     IMAGE_NAME: ${{ env.IMAGE_NAME }}
+      #     IMAGE_TAG: ${{ env.IMAGE_TAG }}
+      #   with:
+      #     host: ${{ secrets.SSH_HOST_PRD }}
+      #     username: ${{ secrets.SSH_USERNAME_PRD }}
+      #     key: ${{ secrets.SSH_KEY_PRD }}
+      #     script_stop: true
+      #     envs: IMAGE_NAME,IMAGE_TAG
+      #     script: |
+      #       echo "IMAGE: $IMAGE_NAME:$IMAGE_TAG"
+      #       export IMAGE_NAME=$IMAGE_NAME
+      #       export IMAGE_TAG=$IMAGE_TAG
+      #       mkdir -p app/prd && cd app/prd
+      #       if [ -d config-management ]; then cd config-management && git restore . && git pull origin prd; else git clone --branch=prd git@github.com:Buang-Disini/config-management.git && cd config-management; fi
+      #       # running db migrate
+      #       docker run --rm --env-file=.env --network buangdisini_app_network $IMAGE_NAME:$IMAGE_TAG /bin/bash -c "yarn migrate && yarn seed:run -- -s CreatePermissionSeeder && yarn seed:run -- -s CreateRoleAdminPermissionSeeder && yarn seed:run -- -s CreateRoleChangerPermissionSeeder"
+      #       docker image rm $IMAGE_NAME:$IMAGE_TAG
+
+      - name: Send notification
+        uses: sarisia/actions-status-discord@v1
+        if: always()
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK_CICD }}
+          username: GitHub Actions

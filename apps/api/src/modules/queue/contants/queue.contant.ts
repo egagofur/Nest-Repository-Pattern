@@ -1,0 +1,1 @@
+export const QUEUE_PAYMENT_EXPIRED = 'QUEUE EXPIRED';

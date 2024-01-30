@@ -1,0 +1,31 @@
+import { Injectable } from '@nestjs/common';
+import { HttpService } from 'nestjs-http-promise';
+import { config } from 'apps/api/src/config';
+import { AxiosResponse } from 'axios';
+
+@Injectable()
+export class ZenzivaNotificationService {
+    constructor(private httpService: HttpService) {}
+
+    async sendSMS(content: string, phoneNumber: string): Promise<void> {
+        const jsonData = {
+            userkey: config.sms.zenziva.userKey,
+            passkey: config.sms.zenziva.passKey,
+            to: phoneNumber,
+            message: content,
+        };
+
+        try {
+            const { status } = await this.httpService.post<AxiosResponse<any>>(
+                config.sms.zenziva.host,
+                JSON.stringify(jsonData),
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                { headers: { 'Content-Type': 'application/json' } },
+            );
+
+            console.log('[Zenziva] - Success : ' + status);
+        } catch (e) {
+            console.log('[Zenziva] - Error ' + e.message);
+        }
+    }
+}

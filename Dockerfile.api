@@ -1,0 +1,21 @@
+FROM        node:16.15.1 AS build
+ARG         ONE_SIGNAL_APP_ID
+ENV         ONE_SIGNAL_APP_ID=${ONE_SIGNAL_APP_ID}
+WORKDIR     /usr/src/app
+COPY        --chown=node:node . /usr/src/app
+RUN         yarn install \
+  && yarn build \
+  && cp -r apps/api/assets dist/apps/api \
+  && rm -rf app/api/assets \
+  && cp -r apps/api/src/infrastructure/mail dist/apps/api/src/infrastructure \
+  && rm -rf apps/api/src/infrastructure/mail \
+  && mkdir dist/temp
+
+FROM        node:16.15.1
+WORKDIR     /usr/src/app
+COPY        --chown=node:node --from=build /usr/src/app/node_modules /usr/src/app/node_modules
+COPY        --chown=node:node --from=build /usr/src/app/dist /usr/src/app/dist
+COPY        --chown=node:node . /usr/src/app/
+USER        node
+ENTRYPOINT  ["./docker-entrypoint.sh"]
+CMD         ["yarn", "start:prod:api"]

@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Billing</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Lato", sans-serif;
+        }
+
+        .title {
+            font-weight: 500;
+            font-size: 16px;
+            letter-spacing: 0.3px;
+            color: #111827;
+        }
+
+        .countdown {
+            font-family: "Manrope";
+            font-style: normal;
+            font-weight: 700;
+            font-size: 28px;
+            line-height: 38px;
+            color: #f4c257;
+            margin: 10px 0 30px 0;
+        }
+
+        .payment__deadline__title {
+            font-family: "Manrope";
+            font-style: normal;
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 22px;
+            color: #9ca3af;
+            margin-top: 40px;
+        }
+
+        .text__secondary {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .box {
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .container {
+            padding: 20px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .container__first {
+            padding-top: 0;
+        }
+
+        .container__next {
+            padding-bottom: 0;
+            margin-top: 20px;
+        }
+
+        .box__container {
+            max-width: 600px;
+            margin: auto;
+            padding: 40px 20px;
+        }
+
+        .payment__deadline__date {
+            margin: 8px 0;
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 22px;
+            color: #111827;
+        }
+
+        .bank__image {
+            height: 30px;
+            object-fit: contain;
+            margin-right: 20px;
+        }
+
+        .border_bottom {
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .text__tersiery {
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 22px;
+            color: #9ca3af;
+        }
+
+        .text__title {
+            font-family: "Manrope";
+            font-style: normal;
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 22px;
+            color: #111827;
+        }
+
+        .text__title__next {
+            margin-top: 5px;
+        }
+
+        .copy {
+            display: flex;
+            align-items: center;
+        }
+
+        .copy__text {
+            font-family: "Manrope";
+            font-style: normal;
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 22px;
+            color: #01803c;
+        }
+
+        .button__container {
+            margin: 30px 0;
+            display: flex;
+        }
+
+        .button__check {
+            color: #00803c;
+            border: 1px solid #00803c;
+            font-weight: bold;
+            padding: 15px;
+            display: block;
+            width: 100%;
+            background-color: white;
+            border-radius: 10px;
+            font-size: 17px;
+            margin-right: 20px;
+            margin-top: 45px;
+            cursor: pointer;
+        }
+
+        .button__back {
+            color: white;
+            background-color: #00803c;
+            font-weight: bold;
+            padding: 15px;
+            display: none;
+            width: 100%;
+            border-radius: 10px;
+            font-size: 17px;
+            border: none;
+            cursor: pointer;
+            margin-top: 30px;
+        }
+
+        .bill__title {
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 22px;
+            /* identical to box height */
+
+            /* Primary Color/Green (Default) */
+
+            color: #01803c;
+        }
+
+        .how__to__pay {
+            font-weight: bold;
+            font-size: 20px;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .bank__account {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .text__bill {
+            font-family: "Manrope";
+            font-style: normal;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 24px;
+            color: #111827;
+            opacity: 0.5;
+        }
+
+        .text__price {
+            font-family: "Manrope";
+            font-style: normal;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 150%;
+            text-align: right;
+            color: #111827;
+        }
+
+        .text__bill__bold {
+            font-family: "Manrope";
+            font-style: normal;
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 22px;
+            text-align: right;
+            color: #111827;
+        }
+
+
+        .text__bill__container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 10px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .text__bill_box {
+            border: 1px solid #01803c7a;
+            border-radius: 10px;
+            padding: 0 15px;
+        }
+
+        .text__how__to__pay {
+            font-family: "Manrope";
+            font-style: normal;
+            font-weight: 500;
+            font-size: 12px;
+            line-height: 16px;
+            color: #01803c;
+            margin: 20px 0;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .text__total {
+            font-family: "Manrope";
+            font-style: normal;
+            font-weight: 600;
+            font-size: 16px;
+            line-height: 22px;
+            color: #111827;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .bank__account__container {
+            margin-bottom: 20px;
+        }
+
+        @media only screen and (max-width: 600px) {
+            .button__container {
+                display: block;
+            }
+
+            .button__check {
+                margin-right: 0;
+                margin-bottom: 10px;
+                margin-top: 40px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box__container">
+        <div>
+            <h2 class="title">Metode Pembayaran</h2>
+
+            <div class="bank__account">
+                <img src="{{bankIcon}}" alt="bank" class="bank__image" />
+                <h2 class="title">{{bankName}} Virtual Account</h2>
+            </div>
+
+            <div id="time">
+                <h3 class="payment__deadline__title">Batas Akhir Pembayaran</h3>
+                <h3 class="text__secondary payment__deadline__date" id="date">
+                </h3>
+                <h3 class="countdown" id="countdown"></h3>
+            </div>
+        </div>
+
+        <div class="box">
+            <div class="container container__next">
+                <div>
+                    <h2 class="text__tersiery">{{virtualAccountName}}</h2>
+                    <h3 class="text__title text__title__next">{{virtualAccountNumber}}</h3>
+                </div>
+                <div class="copy">
+                    <span class="copy__text">Salin</span>
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        style="height: 20px; width: 20px; fill: #00803c; margin-left: 3px" fill="currentColor">
+                        <path d="M7 9a2 2 0 012-2h6a2 2 0 012 2v6a2 2 0 01-2 2H9a2 2 0 01-2-2V9z" />
+                        <path d="M5 3a2 2 0 00-2 2v6a2 2 0 002 2V5h8a2 2 0 00-2-2H5z" />
+                    </svg>
+                </div>
+            </div>
+
+            <div>
+                <h2 class="text__total">Total Pembayaran</h2>
+
+                <div class="text__bill_box">
+                    <div class="text__bill__container">
+                        <h2 class="text__bill">Pembayaran</h2>
+                        <h2 class="text__price">{{billingAmount}}</h2>
+                    </div>
+                    <div class="text__bill__container">
+                        <h2 class="text__bill__bold">Total Pembayaran</h2>
+                        <h2 class="text__price text__bill__bold">{{billingAmount}}</h2>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="text__how__to__pay" id="button__payment">
+                Lihat cara pembayaran
+            </h2>
+
+            <div id="how__to__container"></div>
+
+            <button class="button__back" id="button__back">Kembali</button>
+        </div>
+    </div>
+    </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment-with-locales.min.js"
+        integrity="sha512-vFABRuf5oGUaztndx4KoAEUVQnOvAIFs59y4tO0DILGWhQiFnFHiR+ZJfxLDyJlXgeut9Z07Svuvm+1Jv89w5g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+        moment.locale('id');
+        
+        // format date
+        const currentDate = document.getElementById('date');
+        currentDate.innerHTML = moment(new Date()).format('yyyy-MM-DD hh:mm:ss')
+
+        function startCountdown() {
+            // Set the date we're counting down to
+            const countDownDate = new Date("{{expiredDate}}").getTime();
+            // run countdown
+            const x = setInterval(function () {
+                // Get today's date and time
+                const now = new Date().getTime();
+
+                // Find the distance between now and the count down date
+                const distance = countDownDate - now;
+
+                // Time calculations for days, hours, minutes and seconds
+                const hours = Math.floor(
+                    (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+                );
+                const minutes = Math.floor(
+                    (distance % (1000 * 60 * 60)) / (1000 * 60)
+                );
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                // Display the result in the element with id="time"
+                document.getElementById("countdown").innerHTML =
+                    ("0" + hours).substr(-2) +
+                    ":" +
+                    ("0" + minutes).substr(-2) +
+                    ":" +
+                    ("0" + seconds).substr(-2);
+
+                // If the count down is finished, write some text
+                if (distance < 0) {
+                    clearInterval(x);
+                    document.getElementById("countdown").innerHTML = "EXPIRED";
+                    document.getElementById("countdown").style.color = "red"
+                }
+            }, 1000);
+        }
+
+
+        startCountdown();
+
+        const buttonPayment = document.getElementById("button__payment");
+
+        const time = document.getElementById("time");
+        const howTo = document.getElementById("how__to__container");
+        const buttonBack = document.getElementById('button__back');
+
+        buttonPayment.addEventListener("click", () => {
+            time.style.display = "none";
+
+            // set how to pay
+            howTo.innerHTML = `<br />{{guideline}}`;
+
+            // hide button how to payment
+            buttonPayment.style.display = 'none'
+
+            buttonBack.style.display = 'block';
+
+        });
+
+
+        buttonBack.addEventListener('click', () => {
+            time.style.display = "block";
+
+            // set how to pay
+            howTo.innerHTML = ``;
+
+            buttonBack.style.display = 'none';
+
+            // show button how to payment
+            buttonPayment.style.display = 'block'
+
+            startCountdown();
+
+        })
+
+        // format currency
+        const currencies = document.querySelectorAll('.text__price');
+        currencies.forEach(currency => {
+            currency.textContent = "(IDR) " + parseInt(currency.textContent).toLocaleString('id-ID')
+        })
+    </script>
+
+</body>
+
+</html>

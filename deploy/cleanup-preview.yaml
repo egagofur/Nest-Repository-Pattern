@@ -1,0 +1,38 @@
+---
+- name: create preview
+  hosts: preview
+  remote_user: ajeng
+  become: yes
+  become_user: project
+  gather_facts: no
+  vars:
+    project_name: "{{ lookup('env', 'CI_PROJECT_NAME') | default('project-name', true) }}"
+    version: "{{ lookup('env', 'CI_COMMIT_SHORT_SHA') | default('latest', true) }}"
+    preview_name: "{{ (project_name + '_' + version) | replace('-', '') }}"
+    working_directory: "/var/www/project/{{ preview_name }}"
+    mysql_config_path: "/var/www/project/db/.my.cnf"
+    dest_db_port: "{{ lookup('env', 'DEST_DB_PORT') | default('3306', true) }}"
+
+  tasks:
+  - name: stop container
+    community.docker.docker_container:
+      name: "{{ preview_name }}"
+      state: absent
+
+  - name: delete docker image
+    community.docker.docker_image:
+      name: "registry.gitlab.dot.co.id/playground/boilerplates/nestjs-inertia"
+      state: absent
+      tag: "preview_{{ version }}"
+
+  - name: delete working directory
+    ansible.builtin.file:
+      path: "{{ working_directory }}"
+      state: absent
+
+  - name: drop db "{{ preview_name }}"
+    community.mysql.mysql_db:
+      name: "{{ preview_name }}"
+      state: absent
+      config_file: "{{ mysql_config_path }}"
+      login_port: "{{ dest_db_port }}"

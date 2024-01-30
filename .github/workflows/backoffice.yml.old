@@ -1,0 +1,77 @@
+name: CICD Backoffice
+
+on:
+  push:
+    branches:
+      - development
+    # tags:
+    #   - "*"
+    paths:
+      - "apps/backoffice/**"
+      - "Dockerfile.backoffice"
+
+jobs:
+
+  build_push_deploy:
+    name: Build Push Deploy
+    runs-on: ubuntu-latest
+    # needs: [build_test]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set environment variables
+        run: |
+          echo "IMAGE_NAME=asia-southeast2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/buangdisini/backoffice" >> $GITHUB_ENV
+          TAG=$([ $(echo $GITHUB_REF | cut -d'/' -f2) = "tags" ] && echo "production" || echo "${GITHUB_REF##*/}")
+          echo "IMAGE_TAG=$TAG" >> $GITHUB_ENV
+
+      - name: Login
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      # Install gcloud, `setup-gcloud` automatically picks up authentication from `auth`.
+      - name: "Set up Cloud SDK"
+        uses: "google-github-actions/setup-gcloud@v0"
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker asia-southeast2-docker.pkg.dev --quiet
+
+      - name: Build Docker image
+        run: |
+          docker build \
+          --build-arg ONE_SIGNAL_APP_ID=${{ secrets.ONE_SIGNAL_APP_ID }} \
+          --build-arg GOOGLE_MAPS_API=${{ secrets.GOOGLE_MAPS_API }} \
+          -t $IMAGE_NAME:$IMAGE_TAG -f Dockerfile.backoffice .
+
+      - name: Push Docker image
+        run: docker push $IMAGE_NAME:$IMAGE_TAG
+
+      - name: Deploy on Development
+        if: github.ref == 'refs/heads/development'
+        uses: appleboy/ssh-action@master
+        env:
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
+        with:
+          host: ${{ secrets.SSH_HOST_DEV }}
+          username: ${{ secrets.SSH_USERNAME_DEV }}
+          key: ${{ secrets.SSH_KEY_DEV }}
+          script_stop: true
+          envs: IMAGE_NAME,IMAGE_TAG
+          script: |
+            echo "IMAGE: $IMAGE_NAME:$IMAGE_TAG"
+            export IMAGE_NAME=$IMAGE_NAME
+            export IMAGE_TAG=$IMAGE_TAG
+            mkdir -p app/dev && cd app/dev
+            if [ -d config-management ]; then cd config-management && git restore . && git pull origin dev; else git clone --branch=dev git@github.com:Buang-Disini/config-management.git && cd config-management; fi
+            # running stack deploy
+            docker stack deploy --with-registry-auth -c docker-compose.yml -c docker-compose.backoffice.yml buangdisini
+
+      - name: Send notification
+        uses: sarisia/actions-status-discord@v1
+        if: always()
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK_CICD }}
+          username: GitHub Actions

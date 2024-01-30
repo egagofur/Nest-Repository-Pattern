@@ -1,0 +1,1 @@
+export const DOWN_PAYMENT_PERCENTAGE = 30;

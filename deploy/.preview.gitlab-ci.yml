@@ -1,0 +1,42 @@
+.mr:base:
+  image: asia.gcr.io/dot-gitlab-runner/ansible:2.10
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^dev$|^develop$|^development$|^staging$|^master$|^main$/i'
+  tags: [dot]
+  allow_failure: false
+  before_script:
+    - ansible-galaxy collection install community.docker:==3.4.0
+    - chmod +x ./deploy/run-preview.sh
+
+build_mr:docker_image_preview:
+  extends: .mr:base
+  stage: build
+  image: docker:20.10
+  tags: [dot-highcpu]
+  when: manual
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  script:
+    - docker build
+        --progress plain
+        --build-arg NESTJS_INERTIA_BASE=${CI_REGISTRY_IMAGE}:development_base
+        --tag ${CI_REGISTRY_IMAGE}:preview_${CI_COMMIT_SHORT_SHA}
+        --file Dockerfile.backoffice
+      .
+    - docker push ${CI_REGISTRY_IMAGE}:preview_${CI_COMMIT_SHORT_SHA}
+
+test_mr:preview:
+  extends: .mr:base
+  stage: test
+  needs: ["build_mr:docker_image_preview"]
+  script:
+    - ./deploy/run-preview.sh preview
+  allow_failure: true
+
+post_mr:cleanup_preview:
+  extends: .mr:base
+  stage: .post
+  needs: ["test_mr:preview"]
+  when: manual
+  script:
+    - ./deploy/run-preview.sh cleanup-preview

@@ -1,0 +1,12 @@
+FROM        node:16.15.1 AS build
+WORKDIR     /usr/src/app
+COPY        --chown=node:node . /usr/src/app
+RUN         yarn install
+
+FROM        node:16.15.1
+WORKDIR     /usr/src/app
+COPY        --chown=node:node --from=build /usr/src/app/node_modules /usr/src/app/node_modules
+COPY        --chown=node:node . /usr/src/app/
+USER        node
+ENTRYPOINT  ["./docker-entrypoint.sh"]
+CMD         ["yarn", "migrate"]
