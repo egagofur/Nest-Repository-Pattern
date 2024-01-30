@@ -41,4 +41,8 @@ export class MovieService {
     async delete(id: number): Promise<void> {
         this.movieRepository.deleteMovie(id);
     }
+
+    async findAll(): Promise<IMovie[]> {
+        return this.movieRepository.find();
+    }
 }

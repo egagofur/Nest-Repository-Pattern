@@ -1,5 +1,5 @@
 import { IBaseEntity } from 'interface-models/base-entity.interface';
-export interface IMovieScheduleInterface extends IBaseEntity {
+export interface IMovieSchedule extends IBaseEntity {
     id: number;
     movieId: number;
     startTime: string;

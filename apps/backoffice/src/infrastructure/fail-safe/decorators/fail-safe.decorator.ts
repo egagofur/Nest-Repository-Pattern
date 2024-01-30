@@ -34,7 +34,7 @@ export const FailSafeCheck = (): any => {
             const failSafeService: FailSafeService = this.failSafeService;
 
             // get key from path of url
-            const key = request.originalUrl
+            const key = request.originalUrl;
             const failSafeKey = failSafeService.createKey(key);
 
             // check the expiry of fail safe open gate
@@ -44,8 +44,8 @@ export const FailSafeCheck = (): any => {
             }
 
             // get value count of fail safe fired
-            const failSafeErrorCount = await redisService.getValue(failSafeKey)
-            const downCount = parseInt(failSafeErrorCount) || 0
+            const failSafeErrorCount = await redisService.getValue(failSafeKey);
+            const downCount = parseInt(failSafeErrorCount) || 0;
 
             const maxDown = config.circuitBreaker.maxDown;
             if (downCount > maxDown) throw new InternalOpenCircuitException();

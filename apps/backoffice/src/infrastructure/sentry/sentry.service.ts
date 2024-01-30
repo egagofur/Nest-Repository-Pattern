@@ -27,12 +27,12 @@ export class SentryService {
     constructor(@Inject(REQUEST) private request: Request) {
         const { method, headers, url } = this.request;
 
-        let traceIdFromFe = "";
+        let traceIdFromFe = '';
 
         if (headers['baggage']) {
             const baggageHeader = request.headers['baggage'].toString();
-            
-            [ traceIdFromFe ] = Utils.splitBaggageHeader(baggageHeader);
+
+            [traceIdFromFe] = Utils.splitBaggageHeader(baggageHeader);
         }
 
         // recreate transaction based from HTTP request
@@ -41,7 +41,9 @@ export class SentryService {
             op: 'transaction',
             status: 'ok',
 
-            traceId: traceIdFromFe ? traceIdFromFe : Utils.generateRandomHexString(32),
+            traceId: traceIdFromFe
+                ? traceIdFromFe
+                : Utils.generateRandomHexString(32),
         });
 
         // setup context of newly created transaction

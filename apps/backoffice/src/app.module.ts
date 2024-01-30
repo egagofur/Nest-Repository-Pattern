@@ -54,6 +54,7 @@ import { MaintainModeMiddleware } from './infrastructure/gates/middlewares/maint
 import { PauseModeMiddleware } from './infrastructure/gates/middlewares/pause-mode.middleware';
 import { FailSafeModule } from './infrastructure/fail-safe/fail-safe.module';
 import { MovieModule } from './modules/movie/movie.module';
+import { MovieScheduleModule } from './modules/schedule/schedule.module';
 
 @Module({
     imports: [
@@ -83,6 +84,7 @@ import { MovieModule } from './modules/movie/movie.module';
         GlobalServiceModule,
         ProfileModule,
         MovieModule,
+        MovieScheduleModule,
     ],
     providers: [
         {

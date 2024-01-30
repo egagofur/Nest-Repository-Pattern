@@ -6,10 +6,8 @@ import { FailSafeService } from './services/fail-safe.service';
 import { RedisService } from '../redis/services/redis.service';
 
 @Module({
-    imports: [
-        RedisModule
-    ],
+    imports: [RedisModule],
     providers: [FailSafeService],
     exports: [FailSafeService],
 })
-export class FailSafeModule { }
+export class FailSafeModule {}

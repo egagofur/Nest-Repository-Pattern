@@ -15,9 +15,16 @@ import { CircuitBreakerController } from './controllers/circuit-braeker.controll
             logger: TerminusLogger,
             errorLogStyle: 'pretty',
         }),
-        TerminusModule
+        TerminusModule,
     ],
-    controllers: [DashbordController, CircuitBreakerController, ModeController, MainController, SampleController, HealthController],
+    controllers: [
+        DashbordController,
+        CircuitBreakerController,
+        ModeController,
+        MainController,
+        SampleController,
+        HealthController,
+    ],
     providers: [InertiaAdapter],
 })
-export class MainModule { }
+export class MainModule {}

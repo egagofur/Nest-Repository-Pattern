@@ -11,12 +11,14 @@ export const captureException = (
     replayId: string,
 ): string => {
     const exceptionEventId = Sentry.captureException(error, (scope) => {
-        scope.setSpan(Sentry.startTransaction({
-            name: request.url,
-            op: 'exception',
-            status: 'ok',
-            traceId: traceId,
-        }));
+        scope.setSpan(
+            Sentry.startTransaction({
+                name: request.url,
+                op: 'exception',
+                status: 'ok',
+                traceId: traceId,
+            }),
+        );
 
         scope.setContext('http', {
             method: request.method,
@@ -26,15 +28,15 @@ export const captureException = (
 
         if (replayId) {
             scope.setTag(
-                'replay', 
-                `https://${config.sentry.organizationSlug}/replays/${replayId}/?project=${config.sentry.projectIdentifierNumber}`
+                'replay',
+                `https://${config.sentry.organizationSlug}/replays/${replayId}/?project=${config.sentry.projectIdentifierNumber}`,
             );
         }
 
         scope.getSpan().startChild({
             op: 'child-span',
-            description: 'child-span description'
-        })
+            description: 'child-span description',
+        });
 
         return scope;
     });

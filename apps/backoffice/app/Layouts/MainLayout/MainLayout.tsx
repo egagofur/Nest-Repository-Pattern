@@ -43,7 +43,7 @@ const handleLogout = (
     event:
         | React.MouseEvent<HTMLAnchorElement, MouseEvent>
         | React.KeyboardEvent<HTMLAnchorElement>,
-) => {
+): void => {
     event.preventDefault();
     const isOk = confirm('Are you sure to logout? ');
 
@@ -125,6 +125,11 @@ const menuItems: MenuItem[] = [
     {
         key: Route.Movie,
         label: <Link href={Route.Movie}>Movie</Link>,
+        icon: <HomeOutlined />,
+    },
+    {
+        key: Route.MovieSchedule,
+        label: <Link href={Route.MovieSchedule}>Schedule</Link>,
         icon: <HomeOutlined />,
     },
     {

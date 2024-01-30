@@ -8,12 +8,15 @@ export class MaintainModeMiddleware implements NestMiddleware {
         const isEnable = config.mode.maintain.isEnable;
 
         if (!isEnable && req.baseUrl.includes('/mode/maintain')) {
-            return res.redirect('/')
-        }
-        else if (!isEnable || req.baseUrl.includes('/health') || req.baseUrl.includes('/mode/maintain')) {
+            return res.redirect('/');
+        } else if (
+            !isEnable ||
+            req.baseUrl.includes('/health') ||
+            req.baseUrl.includes('/mode/maintain')
+        ) {
             return next();
         }
 
-        return res.redirect('/mode/maintain')
+        return res.redirect('/mode/maintain');
     }
 }

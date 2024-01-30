@@ -4,41 +4,39 @@ import { RedisClient } from 'redis';
 
 @Injectable()
 export class RedisService {
-    constructor(
-        @Inject(REDIS) private readonly redisClient: RedisClient
-    ) { }
+    constructor(@Inject(REDIS) private readonly redisClient: RedisClient) {}
 
     async storeValue(key: string, value: string): Promise<boolean> {
-        console.log("========= store value redis =========")
-        await this.redisClient.set(key, value)
+        console.log('========= store value redis =========');
+        await this.redisClient.set(key, value);
         return true;
     }
 
     async getValue(key: string): Promise<string> {
         const promies = new Promise((resolve, reject) => {
             this.redisClient.get(key, (err, reply) => {
-                if (err) resolve(null)
-                resolve(reply)
+                if (err) resolve(null);
+                resolve(reply);
             });
-        })
+        });
 
-        const promiseValue = (await promies)
-        return promiseValue ? promiseValue.toString() : null
+        const promiseValue = await promies;
+        return promiseValue ? promiseValue.toString() : null;
     }
 
     async checkExpiry(key: string): Promise<boolean> {
         const promies = new Promise((resolve, reject) => {
             this.redisClient.ttl(key, (err, reply) => {
-                if (err) resolve(null)
-                resolve(reply)
+                if (err) resolve(null);
+                resolve(reply);
             });
-        })
+        });
 
-        const promiseValue = Number(await promies)
+        const promiseValue = Number(await promies);
         const isExpiry = promiseValue < 0;
 
         if (isExpiry) {
-            await this.removeValue(key)
+            await this.removeValue(key);
         }
 
         return isExpiry;
@@ -55,12 +53,11 @@ export class RedisService {
     }
 
     async setExpiry(key: string, expiry: number): Promise<void> {
-        await this.redisClient.expireat(key, expiry)
+        await this.redisClient.expireat(key, expiry);
     }
 
     async storeObject(key: string, obj: object): Promise<boolean> {
         await this.redisClient.HSET(key, 'data', obj);
         return true;
     }
-
 }
