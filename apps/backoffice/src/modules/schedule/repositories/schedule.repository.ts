@@ -1,12 +1,10 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginateUtil } from 'apps/backoffice/src/common/utils/paginate.util';
-import { QueryFailedError, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { IPaginateResponse } from 'apps/backoffice/src/common/interface/index.interface';
 import { Injectable } from '@nestjs/common';
 import { MovieSchedule } from 'entities/movie-schedule/movie-schedule.entity';
 import { ScheduleIndexRequest } from '../requests/schedule-index.request';
-import { ScheduleCreateRequest } from '../requests/schedule-create.request';
-import { ScheduleUpdateRequest } from '../requests/scheudle-update.request';
 
 @Injectable()
 export class ScheduleRepository extends Repository<MovieSchedule> {
@@ -53,27 +51,5 @@ export class ScheduleRepository extends Repository<MovieSchedule> {
         };
 
         return results;
-    }
-
-    async createSchedule(data: ScheduleCreateRequest): Promise<void> {
-        const schedule = this.create(data);
-        await this.save(schedule);
-    }
-
-    async updateSchdule(
-        id: number,
-        data: ScheduleUpdateRequest,
-    ): Promise<void> {
-        const status = await this.update(id, data);
-        if (status.affected < 1) {
-            throw new QueryFailedError('Error data not changed', null, null);
-        }
-    }
-
-    async deleteSchdule(id: number): Promise<void> {
-        const status = await this.delete(id);
-        if (status.affected < 1) {
-            throw new QueryFailedError('Error data not deleted', null, null);
-        }
     }
 }

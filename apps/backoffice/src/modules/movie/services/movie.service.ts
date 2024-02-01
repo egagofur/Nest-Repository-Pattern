@@ -5,6 +5,7 @@ import { IMovie } from 'interface-models/movie/movie.interface';
 import { IPaginateResponse } from 'apps/backoffice/src/common/interface/index.interface';
 import { MovieCreateRequest } from '../requests/movie-create.request';
 import { MovieUpdateRequest } from '../requests/movie-update.request';
+import { QueryFailedError } from 'typeorm';
 
 @Injectable()
 export class MovieService {
@@ -31,15 +32,22 @@ export class MovieService {
             );
         }
 
-        this.movieRepository.createMovie(movie);
+        this.movieRepository.create(movie);
+        this.movieRepository.save(movie);
     }
 
     async update(id: number, movie: MovieUpdateRequest): Promise<void> {
-        this.movieRepository.updateMovie(id, movie);
+        const status = this.movieRepository.update(id, movie);
+        if ((await status).affected < 1) {
+            throw new QueryFailedError('Movie not change', null, null);
+        }
     }
 
     async delete(id: number): Promise<void> {
-        this.movieRepository.deleteMovie(id);
+        const status = this.movieRepository.delete(id);
+        if ((await status).affected < 1) {
+            throw new QueryFailedError('Movie not found', null, null);
+        }
     }
 
     async findAll(): Promise<IMovie[]> {

@@ -25,14 +25,21 @@ export class ScheduleService {
     }
 
     async create(schedule: ScheduleCreateRequest): Promise<void> {
-        this.scheduleRepository.createSchedule(schedule);
+        this.scheduleRepository.create(schedule);
+        this.scheduleRepository.save(schedule);
     }
 
     async update(id: number, schedule: ScheduleUpdateRequest): Promise<void> {
-        this.scheduleRepository.updateSchdule(id, schedule);
+        const status = this.scheduleRepository.update(id, schedule);
+        if ((await status).affected < 1) {
+            throw new Error('Schedule not change');
+        }
     }
 
     async delete(id: number): Promise<void> {
-        this.scheduleRepository.deleteSchdule(id);
+        const status = this.scheduleRepository.delete(id);
+        if ((await status).affected < 1) {
+            throw new Error('Schedule not found');
+        }
     }
 }

@@ -1,13 +1,11 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginateUtil } from 'apps/backoffice/src/common/utils/paginate.util';
 import { Movie } from 'entities/movie/movie.entity';
-import { QueryFailedError, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { MovieIndexRequest } from '../requests/movie-index.request';
 import { IPaginateResponse } from 'apps/backoffice/src/common/interface/index.interface';
 import { IMovie } from 'interface-models/movie/movie.interface';
 import { Injectable } from '@nestjs/common';
-import { MovieCreateRequest } from '../requests/movie-create.request';
-import { MovieUpdateRequest } from '../requests/movie-update.request';
 
 @Injectable()
 export class MovieRepository extends Repository<Movie> {
@@ -85,24 +83,5 @@ export class MovieRepository extends Repository<Movie> {
         const movie = await this.findByTitle(title);
 
         return !!movie;
-    }
-
-    async createMovie(data: MovieCreateRequest): Promise<void> {
-        const movie = this.create(data);
-        await this.save(movie);
-    }
-
-    async updateMovie(id: number, data: MovieUpdateRequest): Promise<void> {
-        const status = await this.update(id, data);
-        if (status.affected < 1) {
-            throw new QueryFailedError('Error data not changed', null, null);
-        }
-    }
-
-    async deleteMovie(id: number): Promise<void> {
-        const status = await this.delete(id);
-        if (status.affected < 1) {
-            throw new QueryFailedError('Error data not deleted', null, null);
-        }
     }
 }
